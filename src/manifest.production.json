@@ -9,7 +9,7 @@
       },
     "version": "0.0.1",
     "background": {
-        "service_worker": "js/background.js"
+        "service_worker": "background.js"
     },
     "action": {
         "default_popup": "html/popup.html"
@@ -20,7 +20,7 @@
                 "<all_urls>"
             ],
             "js": [
-                "js/content.js"
+                "content.js"
             ]
         }
     ]

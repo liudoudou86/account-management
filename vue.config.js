@@ -46,8 +46,8 @@ module.exports = {
   },
   configureWebpack: {
     output: {
-      filename: `js/[name].js`,
-      chunkFilename: `js/[name].js`,
+      filename: `[name].js`,
+      chunkFilename: `[name].js`,
     },
     devtool: isDevMode ? "inline-source-map" : false,
   },
