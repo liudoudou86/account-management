@@ -19,7 +19,7 @@ chromeName.forEach((name) => {
   const fileName = name.replace("." + fileExtension, "");
   pages[fileName] = {
     entry: `src/entry/${name}`,
-    filename: `${fileName}.html`,
+    filename: `html/${fileName}.html`,
   };
 });
 
@@ -46,8 +46,8 @@ module.exports = {
   },
   configureWebpack: {
     output: {
-      filename: `[name].js`,
-      chunkFilename: `[name].js`,
+      filename: `js/[name].js`,
+      chunkFilename: `js/[name].js`,
     },
     devtool: isDevMode ? "inline-source-map" : false,
   },

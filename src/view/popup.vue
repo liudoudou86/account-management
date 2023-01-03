@@ -9,7 +9,7 @@ export default {
   name: "popupView",
   data() {
     return {
-      msg: "popup",
+      msg: "account",
     };
   },
 };
