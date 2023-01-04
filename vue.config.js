@@ -38,7 +38,7 @@ module.exports = {
           },
           {
             from: path.resolve(`src/assets/`),
-            to: `${path.resolve("dist")}/assets/`,
+            to: `${path.resolve("dist")}/imgs/`,
           },
         ],
       },
@@ -46,8 +46,8 @@ module.exports = {
   },
   configureWebpack: {
     output: {
-      filename: `[name].js`,
-      chunkFilename: `[name].js`,
+      filename: `js/[name].js`,
+      chunkFilename: `js/[name].js`,
     },
     devtool: isDevMode ? "inline-source-map" : false,
   },

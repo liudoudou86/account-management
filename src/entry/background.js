@@ -1,1 +1,4 @@
-console.log("hello world background todo something~");
+console.log("background space~");
+chrome.storage.sync.set({
+  history: [],
+});

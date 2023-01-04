@@ -1,1 +1,1 @@
-console.log("hello world content todo something~");
+console.log("content space~");
