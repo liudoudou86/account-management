@@ -1,4 +1,1 @@
-console.log("background space~");
-chrome.storage.sync.set({
-  history: [],
-});
+console.log("后台常驻");
