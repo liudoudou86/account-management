@@ -5,31 +5,40 @@
         <h1>{{ msg }}</h1>
       </el-header>
       <el-main>
-        <el-row :gutter="5" justify="space-between">
-          <el-col :span="16">
+        <el-row :gutter="10" justify="space-evenly">
+          <el-col :span="20">
             <el-input v-model="input" placeholder="请输入标签" />
           </el-col>
-          <el-col :span="8">
-            <el-button type="primary" @click="addAccount()">添加账号</el-button>
+          <el-col :span="4">
+            <el-button type="primary" @click="addAccount()">
+              添加账号
+            </el-button>
           </el-col>
         </el-row>
-        <el-row :gutter="5" class="card-header" justify="space-between">
-          <el-col :span="8">
-            <span>账户: {{ Uname }}</span>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" text>一键登录</el-button>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" text>编辑标签</el-button>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" text>置顶</el-button>
-          </el-col>
-          <el-col :span="4">
-            <el-button type="primary" text>删除</el-button>
-          </el-col>
-        </el-row>
+        <el-table class="table" :data="tableData" border style="width: 100%">
+          <el-table-column
+            prop="username"
+            label="账号名称"
+            align="center"
+            width="170"
+          />
+          <el-table-column prop="tag" label="标签" align="center" width="160">
+            <el-tag v-for="tag in tags" :key="tag.name" closable>
+              {{ tag.name }}
+            </el-tag>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            align="center"
+            width="230"
+          >
+            <el-button link type="primary" size="small">一键登录</el-button>
+            <el-button link type="primary" size="small">编辑标签</el-button>
+            <el-button link type="primary" size="small">置顶</el-button>
+            <el-button link type="primary" size="small">删除</el-button>
+          </el-table-column>
+        </el-table>
       </el-main>
     </el-container>
   </div>
@@ -42,7 +51,8 @@ export default {
     return {
       msg: "测试账号管理插件",
       input: "",
-      Uname: "",
+      tableData: [],
+      tags: [{ name: "test" }, { name: "admin" }],
     };
   },
   methods: {
@@ -57,9 +67,11 @@ export default {
           let message = { action: "GetAccountInfo" };
           //向tab发送请求
           chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
-            console.log("用户名：" + res.username);
-            console.log("密码：" + res.password);
-            this.Uname = res.username;
+            console.log(res);
+            window.localStorage.setItem("accout", JSON.stringify(res));
+            this.tableData.push(
+              JSON.parse(window.localStorage.getItem("accout"))
+            );
           });
         }
       );
@@ -77,9 +89,9 @@ export default {
   color: #2c3e50;
   margin-top: 5px;
   position: relative;
-  width: 530px;
+  width: 600px;
   height: 100%;
-  .card-header {
+  .table {
     margin-top: 10px;
   }
 }
