@@ -10,10 +10,10 @@
             <el-input v-model="input" placeholder="请输入标签" />
           </el-col>
           <el-col :span="3">
-            <el-button type="primary"> 导入 </el-button>
+            <el-button type="success"> 导入 </el-button>
           </el-col>
           <el-col :span="3">
-            <el-button type="primary"> 导出 </el-button>
+            <el-button type="success"> 导出 </el-button>
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="addAccount()">
@@ -21,15 +21,7 @@
             </el-button>
           </el-col>
         </el-row>
-        <el-table
-          class="table"
-          ref="multipleTable"
-          :data="tableData"
-          highlight-current-row
-          border
-          style="width: 100%"
-          @row-click="currentChange()"
-        >
+        <el-table class="table" :data="tableData" border style="width: 100%">
           <el-table-column
             prop="username"
             label="账号名称"
@@ -52,12 +44,24 @@
             align="center"
             width="230"
           >
-            <el-button link type="primary" size="small">一键登录</el-button>
-            <el-button link type="primary" size="small">编辑标签</el-button>
-            <el-button link type="primary" size="small">置顶</el-button>
-            <el-button link type="primary" size="small" @click="delAccount()"
-              >删除</el-button
-            >
+            <template v-slot="scope">
+              <el-button
+                link
+                type="primary"
+                size="small"
+                @click="login(scope.row)"
+                >一键登录</el-button
+              >
+              <el-button link type="primary" size="small">编辑标签</el-button>
+              <el-button link type="primary" size="small">置顶</el-button>
+              <el-button
+                link
+                type="primary"
+                size="small"
+                @click="delAccount(scope.row)"
+                >删除</el-button
+              >
+            </template>
           </el-table-column>
         </el-table>
       </el-main>
@@ -73,7 +77,7 @@ export default {
       msg: "测试账号管理插件",
       input: "",
       tableData: [],
-      tags: [{ name: "test" }, { name: "admin" }],
+      tags: [{ name: "测试环境" }, { name: "管理员" }],
     };
   },
   mounted() {
@@ -94,7 +98,7 @@ export default {
         },
         (tabs) => {
           let message = { action: "GetAccountInfo" };
-          // 向tab发送请求
+          // 与content进行通信
           chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
             // console.log(res);
             let accout = res.username;
@@ -104,15 +108,31 @@ export default {
         }
       );
     },
-    currentChange(row, column, event) {
-      console.log(row, column, event);
+    login(e) {
+      chrome.tabs.query(
+        // 获取当前tab
+        {
+          active: true,
+          currentWindow: true,
+        },
+        (tabs) => {
+          let message = {
+            action: "InputAccountInfo",
+            username: e.username,
+            password: e.password,
+          };
+          // 与content进行通信
+          chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
+            console.log(res.msg);
+          });
+        }
+      );
     },
-    delAccount() {
-      for (var i = 0; i < this.multipleTable.length; i++) {
-        var user = this.multipleTable[i];
-        console.log(user);
-      }
-      // window.localStorage.removeItem(this.tableData.username); // 删除本地账号
+    delAccount(e) {
+      // 通过slot插槽的方式获取子组件的数据
+      // console.log(JSON.stringify(e));
+      window.localStorage.removeItem(e.username); // 删除本地账号
+      window.location.reload(); // 刷新页面
     },
   },
 };
@@ -130,7 +150,7 @@ export default {
   width: 600px;
   height: 100%;
   .table {
-    margin-top: 10px;
+    margin-top: 15px;
     .tag {
       margin-left: 5px;
     }
