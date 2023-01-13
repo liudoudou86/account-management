@@ -16,6 +16,7 @@ chrome.runtime.onMessage.addListener(
       sendResponse({
         username: usernameInput.value,
         password: passwordInput.value,
+        tags: [],
       });
     }
     if (request.action === "InputAccountInfo") {

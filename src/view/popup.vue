@@ -5,15 +5,20 @@
         <h1>{{ msg }}</h1>
       </el-header>
       <el-main>
-        <el-row :gutter="12" justify="space-evenly">
+        <el-row :gutter="15" justify="space-evenly">
           <el-col :span="14">
-            <el-input v-model="input" placeholder="请输入标签" />
+            <el-input
+              v-model="search"
+              placeholder="请输入标签"
+              disabled
+              @keyup.enter="searchInputConfirm()"
+            />
           </el-col>
           <el-col :span="3">
-            <el-button type="success"> 导入 </el-button>
+            <el-button type="info"> 导入 </el-button>
           </el-col>
           <el-col :span="3">
-            <el-button type="success"> 导出 </el-button>
+            <el-button type="info"> 导出 </el-button>
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="addAccount()">
@@ -34,29 +39,30 @@
             align="center"
             width="170"
           />
-          <el-table-column prop="tag" label="标签" align="center" width="290">
-            <el-tag
-              class="tag"
-              v-for="tag in dynamicTags"
-              :key="tag"
-              effect="Plain"
-              closable
-              :disable-transitions="false"
-              @close="handleClose(tag)"
-            >
-              {{ tag }}
-            </el-tag>
-            <el-input
-              v-if="inputVisible"
-              ref="InputRef"
-              v-model="inputValue"
-              size="small"
-              @keyup.enter="handleInputConfirm()"
-              @blur="handleInputConfirm()"
-            />
-            <el-button v-else size="small" @click="showInput()">
-              + 新标签
-            </el-button>
+          <el-table-column prop="tags" label="标签" align="center" width="290">
+            <template v-slot="scope">
+              <el-tag
+                class="tag"
+                v-for="(tag, index) in scope.row.tags"
+                :key="index"
+                effect="Plain"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(scope.row, tag)"
+              >
+                {{ tag }}
+              </el-tag>
+              <el-input
+                v-if="inputVisible"
+                ref="InputRef"
+                v-model="inputValue"
+                size="small"
+                @keyup.enter="handleInputConfirm(scope.row)"
+              />
+              <el-button v-else size="small" @click="showInput()">
+                + 新标签
+              </el-button>
+            </template>
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -101,9 +107,8 @@ export default {
   data() {
     return {
       msg: "测试账号管理插件",
-      input: "",
+      search: "",
       tableData: [],
-      dynamicTags: ["测试环境", "管理员"],
       inputVisible: false,
       inputValue: "",
     };
@@ -112,7 +117,6 @@ export default {
     // 从本地localstorage遍历所有key和value
     for (var i = 0; i < localStorage.length; i++) {
       let key = localStorage.key(i);
-      // console.log(key);
       this.tableData.push(JSON.parse(window.localStorage.getItem(key)));
     }
   },
@@ -140,13 +144,13 @@ export default {
         );
       }
     },
-    delAccount(e) {
+    delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
       // console.log(JSON.stringify(e));
-      window.localStorage.removeItem(e.username); // 删除本地账号
+      window.localStorage.removeItem(row.username); // 删除本地账号
       window.location.reload(); // 刷新页面
     },
-    loginAccount(e) {
+    loginAccount(row) {
       chrome.tabs.query(
         // 获取当前tab
         {
@@ -156,8 +160,8 @@ export default {
         (tabs) => {
           let message = {
             action: "InputAccountInfo",
-            username: e.username,
-            password: e.password,
+            username: row.username,
+            password: row.password,
           };
           // 与content进行通信
           chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
@@ -170,22 +174,53 @@ export default {
       this.tableData.splice(index, 1);
       this.tableData.unshift(row);
     },
-    handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
+    handleClose(row, tag) {
+      // console.log(JSON.stringify(e.tags));
+      let tagsArr = row.tags;
+      let accout = row.username;
+      tagsArr.splice(tagsArr.indexOf(tag), 1);
+      for (var i = 0; i < tagsArr.length; i++) {
+        if (tagsArr[i] === tag) {
+          tagsArr.splice(i, 1);
+          return tagsArr;
+        }
+      }
+      // console.log(tagsArr);
+      let value = {
+        username: row.username,
+        password: row.password,
+        tags: tagsArr,
+      };
+      window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
+      window.location.reload(); // 刷新页面
     },
     showInput() {
       this.inputVisible = true;
-      this.$nextTick(function () {
-        this.$refs.InputRef.focus();
-      });
+      // 此方法无法获取对应行的焦点
+      // this.$nextTick(() => {
+      //   this.$refs.InputRef.focus();
+      // });
     },
-    handleInputConfirm() {
+    handleInputConfirm(row) {
       let inputValue = this.inputValue;
+      let tagsArr = row.tags;
+      let accout = row.username;
       if (inputValue) {
-        this.dynamicTags.push(inputValue);
+        tagsArr.push(inputValue);
+        let value = {
+          username: row.username,
+          password: row.password,
+          tags: tagsArr,
+        };
+        window.localStorage.setItem(accout, JSON.stringify(value)); // 添加tags到本地存储
+        window.location.reload(); // 刷新页面
       }
       this.inputVisible = false;
       this.inputValue = "";
+    },
+    searchInputConfirm() {
+      let searchValue = this.search;
+      console.log(searchValue);
     },
   },
 };
