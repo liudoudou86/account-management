@@ -7,11 +7,7 @@
       <el-main>
         <el-row :gutter="15" justify="space-evenly">
           <el-col :span="20">
-            <el-input
-              v-model="search"
-              placeholder="请输入标签"
-              @keyup.enter="searchInputConfirm()"
-            />
+            <el-input v-model="search" placeholder="请输入标签" />
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="addAccount()">
@@ -22,7 +18,9 @@
         <el-table
           class="table"
           :default-sort="{ prop: 'index' }"
-          :data="tableData"
+          :data="
+            tableData.filter((data) => !search || data.tags.includes(search))
+          "
           border
           style="width: 100%"
         >
@@ -207,10 +205,6 @@ export default {
       }
       this.inputVisible = false;
       this.inputValue = "";
-    },
-    searchInputConfirm() {
-      let searchValue = this.search;
-      console.log(searchValue);
     },
   },
 };
