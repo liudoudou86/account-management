@@ -6,19 +6,12 @@
       </el-header>
       <el-main>
         <el-row :gutter="15" justify="space-evenly">
-          <el-col :span="14">
+          <el-col :span="20">
             <el-input
               v-model="search"
               placeholder="请输入标签"
-              disabled
               @keyup.enter="searchInputConfirm()"
             />
-          </el-col>
-          <el-col :span="3">
-            <el-button type="info"> 导入 </el-button>
-          </el-col>
-          <el-col :span="3">
-            <el-button type="info"> 导出 </el-button>
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="addAccount()">
@@ -53,11 +46,12 @@
                 {{ tag }}
               </el-tag>
               <el-input
+                class="input"
                 v-if="inputVisible"
-                ref="InputRef"
                 v-model="inputValue"
                 size="small"
                 @keyup.enter="handleInputConfirm(scope.row)"
+                @blur="handleInputConfirm(scope.row)"
               />
               <el-button v-else size="small" @click="showInput()">
                 + 新标签
@@ -196,10 +190,6 @@ export default {
     },
     showInput() {
       this.inputVisible = true;
-      // 此方法无法获取对应行的焦点
-      // this.$nextTick(() => {
-      //   this.$refs.InputRef.focus();
-      // });
     },
     handleInputConfirm(row) {
       let inputValue = this.inputValue;
@@ -240,7 +230,7 @@ export default {
   .table {
     margin-top: 15px;
     .tag {
-      margin-left: 5px;
+      margin-right: 5px;
     }
   }
 }
