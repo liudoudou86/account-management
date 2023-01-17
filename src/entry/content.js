@@ -3,6 +3,7 @@ console.log("content读取DOM");
 // 定义全局变量
 var usernameInput = document.querySelector('input[type="text"]');
 var passwordInput = document.querySelector('input[type="password"]');
+// 此处为了兼容多种类型的按钮
 var submit =
   document.querySelector('button[type="button"]') ||
   document.querySelector('button[type="submit"]');

@@ -7,7 +7,11 @@
       <el-main>
         <el-row :gutter="15" justify="space-evenly">
           <el-col :span="20">
-            <el-input v-model="search" placeholder="请输入标签"></el-input>
+            <el-input
+              v-model="inputSearch"
+              placeholder="请输入标签"
+              clearable
+            />
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="addAccount()">
@@ -19,7 +23,9 @@
           class="table"
           :default-sort="{ prop: 'index' }"
           :data="
-            tableData.filter((data) => !search || data.tags.includes(search))
+            tableData.filter(
+              (data) => !inputSearch || data.tags.includes(inputSearch)
+            )
           "
           border
           style="width: 100%"
@@ -100,7 +106,7 @@ export default {
   data() {
     return {
       msg: "测试账号管理插件",
-      search: "",
+      inputSearch: "",
       tableData: [],
       inputVisible: false,
       inputValue: "",
