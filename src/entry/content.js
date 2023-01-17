@@ -1,11 +1,13 @@
 console.log("content读取DOM");
 
 // 定义全局变量
-let usernameInput = document.querySelector('input[type="text"]');
-let passwordInput = document.querySelector('input[type="password"]');
-let submit = document.querySelector("button");
+var usernameInput = document.querySelector('input[type="text"]');
+var passwordInput = document.querySelector('input[type="password"]');
+var submit =
+  document.querySelector('button[type="button"]') ||
+  document.querySelector('button[type="submit"]');
 // 通过添加EventTarget方法监听事件处理
-let evt = new Event("input", {
+var evt = new Event("input", {
   bubbles: true,
 });
 

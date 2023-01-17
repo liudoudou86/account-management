@@ -7,7 +7,7 @@
       <el-main>
         <el-row :gutter="15" justify="space-evenly">
           <el-col :span="20">
-            <el-input v-model="search" placeholder="请输入标签" />
+            <el-input v-model="search" placeholder="请输入标签"></el-input>
           </el-col>
           <el-col :span="4">
             <el-button type="primary" @click="addAccount()">
@@ -47,6 +47,7 @@
                 class="input"
                 v-if="inputVisible"
                 v-model="inputValue"
+                ref="inputRef"
                 size="small"
                 @keyup.enter="handleInputConfirm(scope.row)"
                 @blur="handleInputConfirm(scope.row)"
@@ -188,6 +189,11 @@ export default {
     },
     showInput() {
       this.inputVisible = true;
+      // 待完善
+      // this.$nextTick(() => {
+      //   console.log(this.$refs.inputRef.focus(row, true));
+      //   this.$refs.inputRef.focus(row, true);
+      // });
     },
     handleInputConfirm(row) {
       let inputValue = this.inputValue;
