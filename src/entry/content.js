@@ -19,6 +19,7 @@ chrome.runtime.onMessage.addListener(
       sendResponse({
         username: usernameInput.value,
         password: passwordInput.value,
+        inputVisible: false,
         tags: [],
       });
     }

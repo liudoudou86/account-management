@@ -51,14 +51,15 @@
               </el-tag>
               <el-input
                 class="input"
-                v-if="inputVisible"
+                v-if="scope.row.inputVisible"
                 v-model="inputValue"
                 ref="inputRef"
                 size="small"
+                autofocus="autofocus"
                 @keyup.enter="handleInputConfirm(scope.row)"
-                @blur="handleInputConfirm(scope.row)"
+                @blur="hideInput(scope.row)"
               />
-              <el-button v-else size="small" @click="showInput()">
+              <el-button v-else size="small" @click="showInput(scope.row)">
                 + 新标签
               </el-button>
             </template>
@@ -108,7 +109,6 @@ export default {
       msg: "测试账号管理插件",
       inputSearch: "",
       tableData: [],
-      inputVisible: false,
       inputValue: "",
     };
   },
@@ -124,6 +124,7 @@ export default {
       if (!window.localStorage) {
         alert("该浏览器不支持本地存储");
       } else {
+        this.loading = true;
         chrome.tabs.query(
           // 获取当前tab
           {
@@ -193,13 +194,28 @@ export default {
       window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
       window.location.reload(); // 刷新页面
     },
-    showInput() {
-      this.inputVisible = true;
-      // 待完善
-      // this.$nextTick(() => {
-      //   console.log(this.$refs.inputRef.focus(row, true));
-      //   this.$refs.inputRef.focus(row, true);
-      // });
+    showInput(row) {
+      let accout = row.username;
+      let value = {
+        username: row.username,
+        password: row.password,
+        inputVisible: true,
+        tags: row.tags,
+      };
+      window.localStorage.setItem(accout, JSON.stringify(value)); // 添加tags到本地存储
+      window.location.reload(); // 刷新页面
+    },
+    hideInput(row) {
+      let accout = row.username;
+      this.inputValue = "";
+      let value = {
+        username: row.username,
+        password: row.password,
+        inputVisible: false,
+        tags: row.tags,
+      };
+      window.localStorage.setItem(accout, JSON.stringify(value)); // 添加tags到本地存储
+      window.location.reload(); // 刷新页面
     },
     handleInputConfirm(row) {
       let inputValue = this.inputValue;
@@ -210,12 +226,12 @@ export default {
         let value = {
           username: row.username,
           password: row.password,
+          inputVisible: false,
           tags: tagsArr,
         };
         window.localStorage.setItem(accout, JSON.stringify(value)); // 添加tags到本地存储
         window.location.reload(); // 刷新页面
       }
-      this.inputVisible = false;
       this.inputValue = "";
     },
   },
