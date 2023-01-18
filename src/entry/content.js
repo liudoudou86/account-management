@@ -1,20 +1,23 @@
 console.log("content读取DOM");
 
-// 定义全局变量
-var usernameInput = document.querySelector('input[type="text"]');
-var passwordInput = document.querySelector('input[type="password"]');
-// 此处为了兼容多种类型的按钮
-var submit =
-  document.querySelector('button[type="button"]') ||
-  document.querySelector('button[type="submit"]');
-// 通过添加EventTarget方法监听事件处理
-var evt = new Event("input", {
-  bubbles: true,
-});
-
 chrome.runtime.onMessage.addListener(
   // 监听扩展程序发送的请求
   function (request, sender, sendResponse) {
+    // 定义全局变量
+    var usernameInput =
+      document.querySelector('input[type="text"]') ||
+      document.querySelector('input[name="username"]');
+    var passwordInput =
+      document.querySelector('input[type="password"]') ||
+      document.querySelector('input[name="password"]');
+    // 此处为了兼容多种类型的按钮
+    var submit =
+      document.querySelector('button[type="button"]') ||
+      document.querySelector('button[type="submit"]');
+    // 通过添加EventTarget方法监听事件处理
+    var evt = new Event("input", {
+      bubbles: true,
+    });
     if (request.action === "GetAccountInfo") {
       sendResponse({
         username: usernameInput.value,
