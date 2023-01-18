@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener(
       // console.log(passwordInput.value);
       submit.click();
       sendResponse({
-        msg: "回调成功",
+        msg: "登录成功",
       });
     }
   }

@@ -14,7 +14,7 @@
             />
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" @click="addAccount()">
+            <el-button type="success" @click="addAccount()">
               添加账号
             </el-button>
           </el-col>
@@ -29,20 +29,22 @@
           "
           border
           style="width: 100%"
+          :header-cell-style="{ 'text-align': 'center' }"
         >
           <el-table-column
             prop="username"
             label="账号名称"
-            align="center"
+            align="left"
             width="170"
           />
-          <el-table-column prop="tags" label="标签" align="center" width="290">
+          <el-table-column prop="tags" label="标签" align="left" width="290">
             <template v-slot="scope">
               <el-tag
                 class="tag"
                 v-for="(tag, index) in scope.row.tags"
                 :key="index"
-                effect="Plain"
+                effect="light"
+                round
                 closable
                 :disable-transitions="false"
                 @close="handleClose(scope.row, tag)"
@@ -88,7 +90,7 @@
               >
               <el-button
                 link
-                type="primary"
+                type="danger"
                 size="small"
                 @click="delAccount(scope.row)"
                 >删除</el-button
@@ -106,7 +108,7 @@ export default {
   name: "popupView",
   data() {
     return {
-      msg: "测试账号管理插件",
+      msg: "测试账号管理",
       inputSearch: "",
       tableData: [],
       inputValue: "",
