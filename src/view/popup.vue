@@ -14,7 +14,7 @@
             />
           </el-col>
           <el-col :span="4">
-            <el-button type="success" @click="addAccount()">
+            <el-button type="primary" @click="addAccount()">
               添加账号
             </el-button>
           </el-col>
