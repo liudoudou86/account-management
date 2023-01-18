@@ -154,11 +154,7 @@ export default {
       }
     },
     setCopy(row) {
-      let message = {
-        username: row.username,
-        password: row.password,
-      };
-      alert(JSON.stringify(message));
+      alert("账号: " + row.username + " \n" + "密码: " + row.password);
     },
     delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
