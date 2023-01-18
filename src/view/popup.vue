@@ -35,9 +35,9 @@
             prop="username"
             label="账号名称"
             align="left"
-            width="170"
+            width="180"
           />
-          <el-table-column prop="tags" label="标签" align="left" width="290">
+          <el-table-column prop="tags" label="标签" align="left" width="310">
             <template v-slot="scope">
               <el-tag
                 class="tag"
@@ -70,7 +70,7 @@
             fixed="right"
             label="操作"
             align="center"
-            width="200"
+            width="220"
           >
             <template v-slot="scope">
               <el-button
@@ -87,6 +87,13 @@
                 @click="getTop(scope.row, scope.$index)"
                 :disabled="scope.$index == 0"
                 >置顶</el-button
+              >
+              <el-button
+                link
+                type="success"
+                size="small"
+                @click="setCopy(scope.row)"
+                >复制</el-button
               >
               <el-button
                 link
@@ -145,6 +152,13 @@ export default {
           }
         );
       }
+    },
+    setCopy(row) {
+      let message = {
+        username: row.username,
+        password: row.password,
+      };
+      alert(JSON.stringify(message));
     },
     delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
@@ -249,7 +263,7 @@ export default {
   color: #2c3e50;
   margin-top: 5px;
   position: relative;
-  width: 700px;
+  width: 750px;
   height: 100%;
   .table {
     margin-top: 15px;
