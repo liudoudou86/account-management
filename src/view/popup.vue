@@ -115,7 +115,7 @@ export default {
   name: "popupView",
   data() {
     return {
-      msg: "测试账号管理",
+      msg: "账号管理器",
       inputSearch: "",
       tableData: [],
       inputValue: "",
