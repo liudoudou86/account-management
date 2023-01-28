@@ -29,6 +29,7 @@
           "
           border
           style="width: 100%"
+          height="330"
           :header-cell-style="{ 'text-align': 'center' }"
         >
           <el-table-column
