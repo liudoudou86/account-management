@@ -25,6 +25,11 @@ chromeName.forEach((name) => {
 
 const isDevMode = process.env.NODE_ENV === "production";
 
+// 按需求自动导入
+const AutoImport = require("unplugin-auto-import/webpack");
+const Components = require("unplugin-vue-components/webpack");
+const { ElementPlusResolver } = require("unplugin-vue-components/resolvers");
+
 module.exports = {
   pages,
   filenameHashing: false,
@@ -50,6 +55,14 @@ module.exports = {
       chunkFilename: `js/[name].js`,
     },
     devtool: isDevMode ? "inline-source-map" : false,
+    plugins: [
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
+    ],
   },
   css: {
     extract: false, // Make sure the css is the same
