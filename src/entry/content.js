@@ -20,6 +20,7 @@ chrome.runtime.onMessage.addListener(
     });
     if (request.action === "GetAccountInfo") {
       sendResponse({
+        url: window.location.host,
         username: usernameInput.value,
         password: passwordInput.value,
         inputVisible: false,

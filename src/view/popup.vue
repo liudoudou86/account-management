@@ -146,7 +146,7 @@ export default {
             // 与content进行通信
             chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
               // console.log(res);
-              let accout = res.username;
+              let accout = res.url + "/" + res.username;
               window.localStorage.setItem(accout, JSON.stringify(res)); // 储存账号到本地
               window.location.reload(); // 刷新页面
             });
@@ -199,7 +199,7 @@ export default {
     handleClose(row, tag) {
       // console.log(JSON.stringify(e.tags));
       let tagsArr = row.tags;
-      let accout = row.username;
+      let accout = row.url + "/" + row.username;
       tagsArr.splice(tagsArr.indexOf(tag), 1);
       for (var i = 0; i < tagsArr.length; i++) {
         if (tagsArr[i] === tag) {
@@ -209,16 +209,19 @@ export default {
       }
       // console.log(tagsArr);
       let value = {
+        url: row.url,
         username: row.username,
         password: row.password,
+        inputVisible: false,
         tags: tagsArr,
       };
       window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
       window.location.reload(); // 刷新页面
     },
     showInput(row) {
-      let accout = row.username;
+      let accout = row.url + "/" + row.username;
       let value = {
+        url: row.url,
         username: row.username,
         password: row.password,
         inputVisible: true,
@@ -228,9 +231,10 @@ export default {
       window.location.reload(); // 刷新页面
     },
     hideInput(row) {
-      let accout = row.username;
+      let accout = row.url + "/" + row.username;
       this.inputValue = "";
       let value = {
+        url: row.url,
         username: row.username,
         password: row.password,
         inputVisible: false,
@@ -242,10 +246,11 @@ export default {
     handleInputConfirm(row) {
       let inputValue = this.inputValue;
       let tagsArr = row.tags;
-      let accout = row.username;
+      let accout = row.url + "/" + row.username;
       if (inputValue) {
         tagsArr.push(inputValue);
         let value = {
+          url: row.url,
           username: row.username,
           password: row.password,
           inputVisible: false,
