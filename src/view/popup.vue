@@ -155,7 +155,15 @@ export default {
       }
     },
     setCopy(row) {
-      alert("账号: " + row.username + " \n" + "密码: " + row.password);
+      let content = "账号: " + row.username + " " + "密码: " + row.password;
+      navigator.clipboard
+        .writeText(content)
+        .then(() => {
+          console.log("复制成功");
+        })
+        .catch((err) => {
+          console.log("复制失败" + err);
+        });
     },
     delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
