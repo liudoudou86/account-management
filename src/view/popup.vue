@@ -156,6 +156,7 @@ export default {
     },
     setCopy(row) {
       let content = "账号: " + row.username + " " + "密码: " + row.password;
+      // 将内容添加进系统剪贴板，完成一键复制
       navigator.clipboard
         .writeText(content)
         .then(() => {
