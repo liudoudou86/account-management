@@ -169,7 +169,8 @@ export default {
     delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
       // console.log(JSON.stringify(e));
-      window.localStorage.removeItem(row.username); // 删除本地账号
+      let accout = row.url + "/" + row.username;
+      window.localStorage.removeItem(accout); // 删除本地账号
       window.location.reload(); // 刷新页面
     },
     loginAccount(row) {
