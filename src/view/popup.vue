@@ -24,7 +24,11 @@
           :default-sort="{ prop: 'index' }"
           :data="
             tableData.filter(
-              (data) => !inputSearch || data.tags.includes(inputSearch)
+              (data) =>
+                !inputSearch ||
+                Object.keys(data.tags).some((key) =>
+                  data.tags[key].includes(inputSearch)
+                )
             )
           "
           border
@@ -134,7 +138,6 @@ export default {
       if (!window.localStorage) {
         alert("该浏览器不支持本地存储");
       } else {
-        this.loading = true;
         chrome.tabs.query(
           // 获取当前tab
           {
@@ -155,7 +158,7 @@ export default {
       }
     },
     setCopy(row) {
-      let content = "账号: " + row.username + " " + "密码: " + row.password;
+      let content = "账号:" + row.username + " " + "密码:" + row.password;
       // 将内容添加进系统剪贴板，完成一键复制
       navigator.clipboard
         .writeText(content)
