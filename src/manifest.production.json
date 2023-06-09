@@ -1,13 +1,13 @@
 {
     "manifest_version": 3,
-    "name": "账号管理器",
-    "description": "管理账号的扩展",
+    "name": "Account Management",
+    "description": "一个管理账号和密码的插件",
     "author": "DD",
     "version": "1.0.0",
     "icons":{
-        "16": "imgs/module.png",
-        "48": "imgs/module.png",
-        "128": "imgs/module.png"
+        "16": "imgs/safe.png",
+        "48": "imgs/safe.png",
+        "128": "imgs/safe.png"
       },
     "background": {
         "service_worker": "js/background.js"

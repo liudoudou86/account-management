@@ -5,15 +5,17 @@
         <h1>{{ msg }}</h1>
       </el-header>
       <el-main>
-        <el-row :gutter="15" justify="space-evenly">
-          <el-col :span="20">
+        <el-row class="row" justify="space-evenly">
+          <el-col :span="15">
             <el-input
               v-model="inputSearch"
               placeholder="请输入标签"
               clearable
             />
           </el-col>
-          <el-col :span="4">
+          <el-col :span="9">
+            <el-button type="primary" @click="importFile()"> 导入 </el-button>
+            <el-button type="primary" @click="exportFile()"> 导出 </el-button>
             <el-button type="primary" @click="addAccount()">
               添加账号
             </el-button>
@@ -116,12 +118,15 @@
 </template>
 
 <script>
+import { writeFileXLSX, utils } from "xlsx";
+
 export default {
   name: "popupView",
   data() {
     return {
       msg: "账号管理器",
       inputSearch: "",
+      tableKey: [],
       tableData: [],
       inputValue: "",
     };
@@ -130,10 +135,23 @@ export default {
     // 从本地localstorage遍历所有key和value
     for (var i = 0; i < localStorage.length; i++) {
       let key = localStorage.key(i);
+      this.tableKey.push(key);
       this.tableData.push(JSON.parse(window.localStorage.getItem(key)));
     }
   },
   methods: {
+    importFile() {
+      console.log("看这里: " + JSON.stringify(this.tableKey));
+      console.log("看那里: " + JSON.stringify(this.tableData));
+    },
+    exportFile() {
+      // 转换为可使用的数组
+      const fileData = Array.from(this.tableData);
+      const workSheet = utils.json_to_sheet(fileData);
+      const workBook = utils.book_new();
+      utils.book_append_sheet(workBook, workSheet, "Sheet1");
+      writeFileXLSX(workSheet, "账号密码备份.xlsx");
+    },
     addAccount() {
       if (!window.localStorage) {
         alert("该浏览器不支持本地存储");
@@ -149,7 +167,7 @@ export default {
             // 与content进行通信
             chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
               // console.log(res);
-              let accout = res.url + "/" + res.username;
+              let accout = res.url + "_" + res.username;
               window.localStorage.setItem(accout, JSON.stringify(res)); // 储存账号到本地
               window.location.reload(); // 刷新页面
             });
@@ -172,7 +190,7 @@ export default {
     delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
       // console.log(JSON.stringify(e));
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       window.localStorage.removeItem(accout); // 删除本地账号
       window.location.reload(); // 刷新页面
     },
@@ -203,7 +221,7 @@ export default {
     handleClose(row, tag) {
       // console.log(JSON.stringify(e.tags));
       let tagsArr = row.tags;
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       tagsArr.splice(tagsArr.indexOf(tag), 1);
       for (var i = 0; i < tagsArr.length; i++) {
         if (tagsArr[i] === tag) {
@@ -223,7 +241,7 @@ export default {
       window.location.reload(); // 刷新页面
     },
     showInput(row) {
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       let value = {
         url: row.url,
         username: row.username,
@@ -235,7 +253,7 @@ export default {
       window.location.reload(); // 刷新页面
     },
     hideInput(row) {
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       this.inputValue = "";
       let value = {
         url: row.url,
@@ -250,7 +268,7 @@ export default {
     handleInputConfirm(row) {
       let inputValue = this.inputValue;
       let tagsArr = row.tags;
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       if (inputValue) {
         tagsArr.push(inputValue);
         let value = {
@@ -280,6 +298,12 @@ export default {
   position: relative;
   width: 750px;
   height: 100%;
+  .row {
+    margin-bottom: 20px;
+  }
+  .row:last-child {
+    margin-bottom: 0px;
+  }
   .table {
     margin-top: 15px;
     .tag {
