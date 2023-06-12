@@ -124,7 +124,7 @@ export default {
   name: "popupView",
   data() {
     return {
-      msg: "账号管理器",
+      msg: "账号保险箱",
       inputSearch: "",
       tableKey: [],
       tableData: [],
@@ -133,7 +133,7 @@ export default {
   },
   mounted() {
     // 从本地localstorage遍历所有key和value
-    for (var i = 0; i < localStorage.length; i++) {
+    for (let i = 0; i < localStorage.length; i++) {
       let key = localStorage.key(i);
       this.tableKey.push(key);
       this.tableData.push(JSON.parse(window.localStorage.getItem(key)));
@@ -145,12 +145,11 @@ export default {
       console.log("看那里: " + JSON.stringify(this.tableData));
     },
     exportFile() {
-      // 转换为可使用的数组
-      const fileData = Array.from(this.tableData);
-      const workSheet = utils.json_to_sheet(fileData);
+      // 将js对象直接导出
+      const workSheet = utils.json_to_sheet(this.tableData);
       const workBook = utils.book_new();
-      utils.book_append_sheet(workBook, workSheet, "Sheet1");
-      writeFileXLSX(workSheet, "账号密码备份.xlsx");
+      utils.book_append_sheet(workBook, workSheet, "Data");
+      writeFileXLSX(workBook, "账号保险箱备份.xlsx");
     },
     addAccount() {
       if (!window.localStorage) {
@@ -167,7 +166,7 @@ export default {
             // 与content进行通信
             chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
               // console.log(res);
-              let accout = res.url + "_" + res.username;
+              let accout = res.url + "/" + res.username;
               window.localStorage.setItem(accout, JSON.stringify(res)); // 储存账号到本地
               window.location.reload(); // 刷新页面
             });
@@ -190,7 +189,7 @@ export default {
     delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
       // console.log(JSON.stringify(e));
-      let accout = row.url + "_" + row.username;
+      let accout = row.url + "/" + row.username;
       window.localStorage.removeItem(accout); // 删除本地账号
       window.location.reload(); // 刷新页面
     },
@@ -221,9 +220,9 @@ export default {
     handleClose(row, tag) {
       // console.log(JSON.stringify(e.tags));
       let tagsArr = row.tags;
-      let accout = row.url + "_" + row.username;
+      let accout = row.url + "/" + row.username;
       tagsArr.splice(tagsArr.indexOf(tag), 1);
-      for (var i = 0; i < tagsArr.length; i++) {
+      for (let i = 0; i < tagsArr.length; i++) {
         if (tagsArr[i] === tag) {
           tagsArr.splice(i, 1);
           return tagsArr;
@@ -241,7 +240,7 @@ export default {
       window.location.reload(); // 刷新页面
     },
     showInput(row) {
-      let accout = row.url + "_" + row.username;
+      let accout = row.url + "/" + row.username;
       let value = {
         url: row.url,
         username: row.username,
@@ -253,7 +252,7 @@ export default {
       window.location.reload(); // 刷新页面
     },
     hideInput(row) {
-      let accout = row.url + "_" + row.username;
+      let accout = row.url + "/" + row.username;
       this.inputValue = "";
       let value = {
         url: row.url,
@@ -268,7 +267,7 @@ export default {
     handleInputConfirm(row) {
       let inputValue = this.inputValue;
       let tagsArr = row.tags;
-      let accout = row.url + "_" + row.username;
+      let accout = row.url + "/" + row.username;
       if (inputValue) {
         tagsArr.push(inputValue);
         let value = {
