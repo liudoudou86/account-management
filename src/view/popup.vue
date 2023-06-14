@@ -14,13 +14,26 @@
             />
           </el-col>
           <el-col :span="9">
-            <el-button type="primary" @click="importFile()"> 导入 </el-button>
-            <el-button type="primary" @click="exportFile()"> 导出 </el-button>
-            <el-button type="primary" @click="addAccount()">
-              添加账号
+            <el-button type="primary" @click="buttonVisible = true">
+              导入
             </el-button>
+            <el-button type="primary" @click="exportFile"> 导出 </el-button>
+            <el-button type="primary" @click="addAccount"> 添加账号 </el-button>
           </el-col>
         </el-row>
+        <el-dialog v-model="buttonVisible" title="导入账号密码备份">
+          <el-upload
+            action=""
+            accept=".xls, .XLS, .xlsx, .XLSX"
+            :limit="1"
+            :http-request="importFile"
+          >
+            <el-button type="primary"> 上传文件 </el-button>
+            <template #tip>
+              <div class="el-upload__tip">支持扩展名: .xls .xlsx</div>
+            </template>
+          </el-upload>
+        </el-dialog>
         <el-table
           class="table"
           :default-sort="{ prop: 'index' }"
@@ -118,7 +131,7 @@
 </template>
 
 <script>
-import { writeFileXLSX, utils } from "xlsx";
+import { read, writeFileXLSX, utils } from "xlsx";
 
 export default {
   name: "popupView",
@@ -129,6 +142,7 @@ export default {
       tableKey: [],
       tableData: [],
       inputValue: "",
+      buttonVisible: false,
     };
   },
   mounted() {
@@ -140,16 +154,60 @@ export default {
     }
   },
   methods: {
-    importFile() {
-      console.log("看这里: " + JSON.stringify(this.tableKey));
-      console.log("看那里: " + JSON.stringify(this.tableData));
+    async importFile(e) {
+      const files = e.file;
+      const data = await this.excelTojson(files);
+      // 向数组增加元素
+      const newData = data.map((item) => ({
+        ...item,
+        tags: [],
+      }));
+      console.log("读取文件的内容为: " + JSON.stringify(newData));
+      for (let i = 0; i < newData.length; i++) {
+        let getUrl = newData[i].url;
+        let getUsername = newData[i].username;
+        let value = newData[i];
+        console.log("getUrl " + getUrl);
+        console.log("getUsername " + getUsername);
+        console.log("value " + JSON.stringify(value));
+        let accout = getUrl + "/" + getUsername;
+        window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
+      }
+      window.location.reload(); // 刷新页面
     },
-    exportFile() {
+    excelTojson(file) {
+      // 异步读取文件
+      return new Promise((resolve) => {
+        const fileReader = new FileReader();
+        fileReader.onload = (ev) => {
+          const data = ev.target.result;
+          if (data === null) {
+            return Promise.resolve([]);
+          }
+          const workBook = read(data, {
+            type: "binary",
+          });
+          const workName = workBook.SheetNames[0];
+          // 转换成json格式
+          const workSheet = utils.sheet_to_json(workBook.Sheets[workName]);
+          resolve(workSheet);
+        };
+        fileReader.readAsBinaryString(file);
+      });
+    },
+    // 异步导出
+    async exportFile() {
+      const url = this.tableData.url;
+      console.log(url);
+      const username = this.tableData.username;
+      console.log(username);
+      const password = this.tableData.password;
+      console.log(password);
       // 将js对象直接导出
       const workSheet = utils.json_to_sheet(this.tableData);
       const workBook = utils.book_new();
       utils.book_append_sheet(workBook, workSheet, "Data");
-      writeFileXLSX(workBook, "账号保险箱备份.xlsx");
+      await writeFileXLSX(workBook, "账号保险箱备份导出.xlsx");
     },
     addAccount() {
       if (!window.localStorage) {

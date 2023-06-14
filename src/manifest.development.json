@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Account Management",
-    "description": "一个管理账号和密码的插件",
+    "description": "一个管理账号、密码的工具扩展。",
     "author": "DD",
     "version": "1.0.0",
     "icons":{
