@@ -156,24 +156,28 @@ export default {
   methods: {
     async importFile(e) {
       const files = e.file;
-      const data = await this.excelTojson(files);
-      // 向数组增加元素
-      const newData = data.map((item) => ({
-        ...item,
-        tags: [],
-      }));
-      console.log("读取文件的内容为: " + JSON.stringify(newData));
-      for (let i = 0; i < newData.length; i++) {
-        let getUrl = newData[i].url;
-        let getUsername = newData[i].username;
-        let value = newData[i];
-        console.log("getUrl " + getUrl);
-        console.log("getUsername " + getUsername);
-        console.log("value " + JSON.stringify(value));
-        let accout = getUrl + "/" + getUsername;
-        window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
+      try {
+        const data = await this.excelTojson(files);
+        // 向数组增加元素
+        const newData = data.map((item) => ({
+          ...item,
+          tags: [],
+        }));
+        // console.log("读取文件的内容为: " + JSON.stringify(newData));
+        for (let i = 0; i < newData.length; i++) {
+          let getUrl = newData[i].url;
+          let getUsername = newData[i].username;
+          let value = newData[i];
+          // console.log("getUrl " + getUrl);
+          // console.log("getUsername " + getUsername);
+          // console.log("value " + JSON.stringify(value));
+          let accout = getUrl + "/" + getUsername;
+          window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
+        }
+        window.location.reload(); // 刷新页面
+      } catch (err) {
+        console.log("errorMessage: " + err);
       }
-      window.location.reload(); // 刷新页面
     },
     excelTojson(file) {
       // 异步读取文件
