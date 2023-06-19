@@ -201,12 +201,6 @@ export default {
     },
     // 异步导出
     async exportFile() {
-      const url = this.tableData.url;
-      console.log(url);
-      const username = this.tableData.username;
-      console.log(username);
-      const password = this.tableData.password;
-      console.log(password);
       // 将js对象直接导出
       const workSheet = utils.json_to_sheet(this.tableData);
       const workBook = utils.book_new();
