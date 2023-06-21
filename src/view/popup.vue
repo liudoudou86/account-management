@@ -256,15 +256,66 @@ export default {
           active: true,
           currentWindow: true,
         },
-        (tabs) => {
-          let message = {
-            action: "InputAccountInfo",
-            username: row.username,
-            password: row.password,
-          };
+        (tab) => {
+          let message = { action: "GetCurrentUrl" };
           // 与content进行通信
-          chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
-            console.log(res.msg);
+          chrome.tabs.sendMessage(tab[0].id, message, (res) => {
+            let currentUrl = res.url;
+            let rowUrl = row.url;
+            if (currentUrl.includes(rowUrl)) {
+              chrome.tabs.query(
+                // 获取当前tab
+                {
+                  active: true,
+                  currentWindow: true,
+                },
+                (tab) => {
+                  let message = {
+                    action: "InputAccountInfo",
+                    username: row.username,
+                    password: row.password,
+                  };
+                  // 与content进行通信
+                  chrome.tabs.sendMessage(tab[0].id, message, (res) => {
+                    console.log(res.msg);
+                  });
+                }
+              );
+            } else {
+              chrome.tabs.create({ url: row.url }, async (tab) => {
+                try {
+                  await chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    // 通过args给func传参
+                    args: [row],
+                    func: (row) => {
+                      // 定义全局变量
+                      let usernameInput =
+                        document.querySelector('input[type="text"]') ||
+                        document.querySelector('input[name="username"]');
+                      let passwordInput =
+                        document.querySelector('input[type="password"]') ||
+                        document.querySelector('input[name="password"]');
+                      // 此处为了兼容多种类型的按钮
+                      let submit =
+                        document.querySelector('button[type="button"]') ||
+                        document.querySelector('button[type="submit"]');
+                      // 通过添加EventTarget方法监听事件处理
+                      let evt = new Event("input", {
+                        bubbles: true,
+                      });
+                      usernameInput.value = row.username;
+                      usernameInput.dispatchEvent(evt);
+                      passwordInput.value = row.password;
+                      passwordInput.dispatchEvent(evt);
+                      submit.click();
+                    },
+                  });
+                } catch (err) {
+                  console.error(`failed error: ${err}`);
+                }
+              });
+            }
           });
         }
       );

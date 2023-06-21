@@ -18,9 +18,14 @@ chrome.runtime.onMessage.addListener(
     let evt = new Event("input", {
       bubbles: true,
     });
+    if (request.action === "GetCurrentUrl") {
+      sendResponse({
+        url: window.location.href,
+      });
+    }
     if (request.action === "GetAccountInfo") {
       sendResponse({
-        url: window.location.host,
+        url: window.location.href,
         username: usernameInput.value,
         password: passwordInput.value,
         inputVisible: false,
@@ -30,10 +35,8 @@ chrome.runtime.onMessage.addListener(
     if (request.action === "InputAccountInfo") {
       usernameInput.value = request.username;
       usernameInput.dispatchEvent(evt);
-      // console.log(usernameInput.value);
       passwordInput.value = request.password;
       passwordInput.dispatchEvent(evt);
-      // console.log(passwordInput.value);
       submit.click();
       sendResponse({
         msg: "登录成功",
