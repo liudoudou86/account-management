@@ -139,7 +139,6 @@ export default {
     return {
       msg: "账号保险箱",
       inputSearch: "",
-      tableKey: [],
       tableData: [],
       inputValue: "",
       buttonVisible: false,
@@ -149,7 +148,6 @@ export default {
     // 从本地localstorage遍历所有key和value
     for (let i = 0; i < localStorage.length; i++) {
       let key = localStorage.key(i);
-      this.tableKey.push(key);
       this.tableData.push(JSON.parse(window.localStorage.getItem(key)));
     }
   },
@@ -201,10 +199,17 @@ export default {
     },
     // 异步导出
     async exportFile() {
-      // 将js对象直接导出
+      // 将tableData转换为可用的数组
+      const initData = JSON.parse(JSON.stringify(this.tableData));
+      const newArr = initData.map((item) => {
+        return item.tags;
+      });
       const workSheet = utils.json_to_sheet(this.tableData);
       const workBook = utils.book_new();
       utils.book_append_sheet(workBook, workSheet, "Data");
+      // 将转换之后的数组插入到已经生成的sheet内容中
+      utils.sheet_add_aoa(workSheet, newArr, { origin: "E2" });
+      // 将js对象直接导出
       await writeFileXLSX(workBook, "账号保险箱备份导出.xlsx");
     },
     addAccount() {
