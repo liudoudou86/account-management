@@ -171,7 +171,7 @@ export default {
           // console.log("getUrl " + getUrl);
           // console.log("getUsername " + getUsername);
           // console.log("value " + JSON.stringify(value));
-          let accout = getUrl + "/" + getUsername;
+          let accout = getUrl + "_" + getUsername;
           window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
         }
         window.location.reload(); // 刷新页面
@@ -222,7 +222,7 @@ export default {
             // 与content进行通信
             chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
               // console.log(res);
-              let accout = res.url + "/" + res.username;
+              let accout = res.url + "_" + res.username;
               window.localStorage.setItem(accout, JSON.stringify(res)); // 储存账号到本地
               window.location.reload(); // 刷新页面
             });
@@ -245,7 +245,7 @@ export default {
     delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
       // console.log(JSON.stringify(e));
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       window.localStorage.removeItem(accout); // 删除本地账号
       window.location.reload(); // 刷新页面
     },
@@ -327,7 +327,7 @@ export default {
     handleClose(row, tag) {
       // console.log(JSON.stringify(e.tags));
       let tagsArr = row.tags;
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       tagsArr.splice(tagsArr.indexOf(tag), 1);
       for (let i = 0; i < tagsArr.length; i++) {
         if (tagsArr[i] === tag) {
@@ -347,7 +347,7 @@ export default {
       window.location.reload(); // 刷新页面
     },
     showInput(row) {
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       let value = {
         url: row.url,
         username: row.username,
@@ -359,7 +359,7 @@ export default {
       window.location.reload(); // 刷新页面
     },
     hideInput(row) {
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       this.inputValue = "";
       let value = {
         url: row.url,
@@ -374,7 +374,7 @@ export default {
     handleInputConfirm(row) {
       let inputValue = this.inputValue;
       let tagsArr = row.tags;
-      let accout = row.url + "/" + row.username;
+      let accout = row.url + "_" + row.username;
       if (inputValue) {
         tagsArr.push(inputValue);
         let value = {
