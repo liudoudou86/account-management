@@ -155,20 +155,20 @@ export default {
     async importFile(e) {
       const files = e.file;
       try {
-        const data = await this.excelTojson(files);
-        // 向数组增加元素
-        const newData = data.map((item) => ({
-          ...item,
-          tags: [],
-        }));
-        // console.log("读取文件的内容为: " + JSON.stringify(newData));
+        const newData = await this.excelToJson(files);
+        // 将tags进行格式化处理
+        newData.forEach((tagsFix) => {
+          tagsFix.tags = [tagsFix.tags, tagsFix.tags_1, tagsFix.tags_2].filter(
+            (tag) => tag !== undefined
+          );
+          delete tagsFix.tags_1;
+          delete tagsFix.tags_2;
+        });
+        console.log("读取文件的内容为: " + JSON.stringify(newData));
         for (let i = 0; i < newData.length; i++) {
           let getUrl = newData[i].url;
           let getUsername = newData[i].username;
           let value = newData[i];
-          // console.log("getUrl " + getUrl);
-          // console.log("getUsername " + getUsername);
-          // console.log("value " + JSON.stringify(value));
           let accout = getUrl + "_" + getUsername;
           window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
         }
@@ -177,7 +177,7 @@ export default {
         console.log("errorMessage: " + err);
       }
     },
-    excelTojson(file) {
+    excelToJson(file) {
       // 异步读取文件
       return new Promise((resolve) => {
         const fileReader = new FileReader();
@@ -249,7 +249,6 @@ export default {
     },
     delAccount(row) {
       // 通过slot插槽的方式获取子组件的数据
-      // console.log(JSON.stringify(e));
       let accout = row.url + "_" + row.username;
       window.localStorage.removeItem(accout); // 删除本地账号
       window.location.reload(); // 刷新页面
@@ -288,37 +287,33 @@ export default {
               );
             } else {
               chrome.tabs.create({ url: row.url }, async (tab) => {
-                try {
-                  await chrome.scripting.executeScript({
-                    target: { tabId: tab.id },
-                    // 通过args给func传参
-                    args: [row],
-                    func: (row) => {
-                      // 定义全局变量
-                      let usernameInput =
-                        document.querySelector('input[type="text"]') ||
-                        document.querySelector('input[name="username"]');
-                      let passwordInput =
-                        document.querySelector('input[type="password"]') ||
-                        document.querySelector('input[name="password"]');
-                      // 此处为了兼容多种类型的按钮
-                      let submit =
-                        document.querySelector('button[type="button"]') ||
-                        document.querySelector('button[type="submit"]');
-                      // 通过添加EventTarget方法监听事件处理
-                      let evt = new Event("input", {
-                        bubbles: true,
-                      });
-                      usernameInput.value = row.username;
-                      usernameInput.dispatchEvent(evt);
-                      passwordInput.value = row.password;
-                      passwordInput.dispatchEvent(evt);
-                      submit.click();
-                    },
-                  });
-                } catch (err) {
-                  console.error(`failed error: ${err}`);
-                }
+                await chrome.scripting.executeScript({
+                  target: { tabId: tab.id },
+                  // 通过args给func传参
+                  args: [row],
+                  func: (row) => {
+                    // 定义全局变量
+                    let usernameInput =
+                      document.querySelector('input[type="text"]') ||
+                      document.querySelector('input[name="username"]');
+                    let passwordInput =
+                      document.querySelector('input[type="password"]') ||
+                      document.querySelector('input[name="password"]');
+                    // 此处为了兼容多种类型的按钮
+                    let submit =
+                      document.querySelector('button[type="button"]') ||
+                      document.querySelector('button[type="submit"]');
+                    // 通过添加EventTarget方法监听事件处理
+                    let evt = new Event("input", {
+                      bubbles: true,
+                    });
+                    usernameInput.value = row.username;
+                    usernameInput.dispatchEvent(evt);
+                    passwordInput.value = row.password;
+                    passwordInput.dispatchEvent(evt);
+                    submit.click();
+                  },
+                });
               });
             }
           });
@@ -340,7 +335,6 @@ export default {
           return tagsArr;
         }
       }
-      // console.log(tagsArr);
       let value = {
         url: row.url,
         username: row.username,
