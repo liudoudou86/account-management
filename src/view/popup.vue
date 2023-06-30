@@ -292,26 +292,29 @@ export default {
                   // 通过args给func传参
                   args: [row],
                   func: (row) => {
-                    // 定义全局变量
-                    let usernameInput =
-                      document.querySelector('input[type="text"]') ||
-                      document.querySelector('input[name="username"]');
-                    let passwordInput =
-                      document.querySelector('input[type="password"]') ||
-                      document.querySelector('input[name="password"]');
-                    // 此处为了兼容多种类型的按钮
-                    let submit =
-                      document.querySelector('button[type="button"]') ||
-                      document.querySelector('button[type="submit"]');
-                    // 通过添加EventTarget方法监听事件处理
-                    let evt = new Event("input", {
-                      bubbles: true,
-                    });
-                    usernameInput.value = row.username;
-                    usernameInput.dispatchEvent(evt);
-                    passwordInput.value = row.password;
-                    passwordInput.dispatchEvent(evt);
-                    submit.click();
+                    // 增加延迟输入
+                    setTimeout(() => {
+                      // 定义全局变量
+                      let usernameInput =
+                        document.querySelector('input[type="text"]') ||
+                        document.querySelector('input[name="username"]');
+                      let passwordInput =
+                        document.querySelector('input[type="password"]') ||
+                        document.querySelector('input[name="password"]');
+                      // 此处为了兼容多种类型的按钮
+                      let submit =
+                        document.querySelector('button[type="button"]') ||
+                        document.querySelector('button[type="submit"]');
+                      // 通过添加EventTarget方法监听事件处理
+                      let evt = new Event("input", {
+                        bubbles: true,
+                      });
+                      usernameInput.value = row.username;
+                      usernameInput.dispatchEvent(evt);
+                      passwordInput.value = row.password;
+                      passwordInput.dispatchEvent(evt);
+                      submit.click();
+                    }, 3000);
                   },
                 });
               });
