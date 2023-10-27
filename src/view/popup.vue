@@ -62,13 +62,13 @@
                 prop="username"
                 label="账号名称"
                 align="left"
-                width="180"
+                width="200"
               />
               <el-table-column
                 prop="tags"
                 label="标签"
                 align="left"
-                width="310"
+                width="300"
               >
                 <template v-slot="scope">
                   <el-tag
@@ -102,7 +102,7 @@
                 fixed="right"
                 label="操作"
                 align="center"
-                width="220"
+                width="210"
               >
                 <template v-slot="scope">
                   <el-button
@@ -160,13 +160,13 @@
                 prop="username"
                 label="账号名称"
                 align="left"
-                width="180"
+                width="200"
               />
               <el-table-column
                 prop="tags"
                 label="标签"
                 align="left"
-                width="310"
+                width="300"
               >
                 <template v-slot="scope">
                   <el-tag
@@ -200,7 +200,7 @@
                 fixed="right"
                 label="操作"
                 align="center"
-                width="220"
+                width="210"
               >
                 <template v-slot="scope">
                   <el-button
@@ -258,13 +258,13 @@
                 prop="username"
                 label="账号名称"
                 align="left"
-                width="180"
+                width="200"
               />
               <el-table-column
                 prop="tags"
                 label="标签"
                 align="left"
-                width="310"
+                width="300"
               >
                 <template v-slot="scope">
                   <el-tag
@@ -298,7 +298,7 @@
                 fixed="right"
                 label="操作"
                 align="center"
-                width="220"
+                width="210"
               >
                 <template v-slot="scope">
                   <el-button
@@ -374,7 +374,6 @@ export default {
     datafilter(activeName) {
       console.log("数据显示", this.rawTableData);
       console.log("标签页", activeName);
-      // TODO 通过Tab页切换重新渲染内容
       if (activeName === "UAT") {
         this.tableDataUAT = this.rawTableData.filter(
           (item) => item.environment === "UAT"
@@ -437,6 +436,7 @@ export default {
     async exportFile() {
       // 将rawTableData转换为可用的数组
       const initData = JSON.parse(JSON.stringify(this.rawTableData));
+      console.log(initData);
       const newArr = initData.map((item) => {
         return item.tags;
       });
@@ -444,7 +444,7 @@ export default {
       const workBook = utils.book_new();
       utils.book_append_sheet(workBook, workSheet, "Data");
       // 将转换之后的数组插入到已经生成的sheet内容中
-      utils.sheet_add_aoa(workSheet, newArr, { origin: "E2" });
+      utils.sheet_add_aoa(workSheet, newArr, { origin: "F2" });
       // 将js对象直接导出
       await writeFileXLSX(workBook, "账号保险箱备份导出.xlsx");
     },
@@ -647,7 +647,7 @@ export default {
   color: #2c3e50;
   margin-top: 5px;
   position: relative;
-  width: 800px;
+  width: 780px;
   height: 100%;
   .row {
     margin-bottom: 20px;
