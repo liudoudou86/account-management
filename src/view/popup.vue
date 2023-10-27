@@ -34,97 +34,307 @@
             </template>
           </el-upload>
         </el-dialog>
-        <el-table
-          class="table"
-          :default-sort="{ prop: 'index' }"
-          :data="
-            tableData.filter(
-              (data) =>
-                !inputSearch ||
-                Object.keys(data.tags).some((key) =>
-                  data.tags[key].includes(inputSearch)
-                )
-            )
-          "
-          border
-          style="width: 100%"
-          height="330"
-          :header-cell-style="{ 'text-align': 'center' }"
+        <el-tabs
+          v-model="activeName"
+          class="demo-tabs"
+          type="border-card"
+          :before-leave="datafilter"
         >
-          <el-table-column
-            prop="username"
-            label="账号名称"
-            align="left"
-            width="180"
-          />
-          <el-table-column prop="tags" label="标签" align="left" width="310">
-            <template v-slot="scope">
-              <el-tag
-                class="tag"
-                v-for="(tag, index) in scope.row.tags"
-                :key="index"
-                effect="light"
-                round
-                closable
-                :disable-transitions="false"
-                @close="handleClose(scope.row, tag)"
-              >
-                {{ tag }}
-              </el-tag>
-              <el-input
-                class="input"
-                v-if="scope.row.inputVisible"
-                v-model="inputValue"
-                ref="inputRef"
-                size="small"
-                autofocus="autofocus"
-                @keyup.enter="handleInputConfirm(scope.row)"
-                @blur="hideInput(scope.row)"
+          <el-tab-pane label="STG" name="STG">
+            <el-table
+              class="table"
+              :default-sort="{ prop: 'index' }"
+              :data="
+                tableDataSTG.filter(
+                  (data) =>
+                    !inputSearch ||
+                    Object.keys(data.tags).some((key) =>
+                      data.tags[key].includes(inputSearch)
+                    )
+                )
+              "
+              border
+              style="width: 100%"
+              height="330"
+              :header-cell-style="{ 'text-align': 'center' }"
+            >
+              <el-table-column
+                prop="username"
+                label="账号名称"
+                align="left"
+                width="180"
               />
-              <el-button v-else size="small" @click="showInput(scope.row)">
-                + 新标签
-              </el-button>
-            </template>
-          </el-table-column>
-          <el-table-column
-            fixed="right"
-            label="操作"
-            align="center"
-            width="220"
-          >
-            <template v-slot="scope">
-              <el-button
-                link
-                type="primary"
-                size="small"
-                @click="loginAccount(scope.row)"
-                >一键登录</el-button
+              <el-table-column
+                prop="tags"
+                label="标签"
+                align="left"
+                width="310"
               >
-              <el-button
-                link
-                type="primary"
-                size="small"
-                @click="getTop(scope.row, scope.$index)"
-                :disabled="scope.$index == 0"
-                >置顶</el-button
+                <template v-slot="scope">
+                  <el-tag
+                    class="tag"
+                    v-for="(tag, index) in scope.row.tags"
+                    :key="index"
+                    effect="light"
+                    round
+                    closable
+                    :disable-transitions="false"
+                    @close="handleClose(scope.row, tag)"
+                  >
+                    {{ tag }}
+                  </el-tag>
+                  <el-input
+                    class="input"
+                    v-if="scope.row.inputVisible"
+                    v-model="inputValue"
+                    ref="inputRef"
+                    size="small"
+                    autofocus="autofocus"
+                    @keyup.enter="handleInputConfirm(scope.row)"
+                    @blur="hideInput(scope.row)"
+                  />
+                  <el-button v-else size="small" @click="showInput(scope.row)">
+                    + 新标签
+                  </el-button>
+                </template>
+              </el-table-column>
+              <el-table-column
+                fixed="right"
+                label="操作"
+                align="center"
+                width="220"
               >
-              <el-button
-                link
-                type="success"
-                size="small"
-                @click="setCopy(scope.row)"
-                >复制</el-button
+                <template v-slot="scope">
+                  <el-button
+                    link
+                    type="primary"
+                    size="small"
+                    @click="loginAccount(scope.row)"
+                    >一键登录</el-button
+                  >
+                  <el-button
+                    link
+                    type="primary"
+                    size="small"
+                    @click="getTop(scope.row, scope.$index)"
+                    :disabled="scope.$index == 0"
+                    >置顶</el-button
+                  >
+                  <el-button
+                    link
+                    type="success"
+                    size="small"
+                    @click="setCopy(scope.row)"
+                    >复制</el-button
+                  >
+                  <el-button
+                    link
+                    type="danger"
+                    size="small"
+                    @click="delAccount(scope.row)"
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="UAT" name="UAT">
+            <el-table
+              class="table"
+              :default-sort="{ prop: 'index' }"
+              :data="
+                tableDataUAT.filter(
+                  (data) =>
+                    !inputSearch ||
+                    Object.keys(data.tags).some((key) =>
+                      data.tags[key].includes(inputSearch)
+                    )
+                )
+              "
+              border
+              style="width: 100%"
+              height="330"
+              :header-cell-style="{ 'text-align': 'center' }"
+            >
+              <el-table-column
+                prop="username"
+                label="账号名称"
+                align="left"
+                width="180"
+              />
+              <el-table-column
+                prop="tags"
+                label="标签"
+                align="left"
+                width="310"
               >
-              <el-button
-                link
-                type="danger"
-                size="small"
-                @click="delAccount(scope.row)"
-                >删除</el-button
+                <template v-slot="scope">
+                  <el-tag
+                    class="tag"
+                    v-for="(tag, index) in scope.row.tags"
+                    :key="index"
+                    effect="light"
+                    round
+                    closable
+                    :disable-transitions="false"
+                    @close="handleClose(scope.row, tag)"
+                  >
+                    {{ tag }}
+                  </el-tag>
+                  <el-input
+                    class="input"
+                    v-if="scope.row.inputVisible"
+                    v-model="inputValue"
+                    ref="inputRef"
+                    size="small"
+                    autofocus="autofocus"
+                    @keyup.enter="handleInputConfirm(scope.row)"
+                    @blur="hideInput(scope.row)"
+                  />
+                  <el-button v-else size="small" @click="showInput(scope.row)">
+                    + 新标签
+                  </el-button>
+                </template>
+              </el-table-column>
+              <el-table-column
+                fixed="right"
+                label="操作"
+                align="center"
+                width="220"
               >
-            </template>
-          </el-table-column>
-        </el-table>
+                <template v-slot="scope">
+                  <el-button
+                    link
+                    type="primary"
+                    size="small"
+                    @click="loginAccount(scope.row)"
+                    >一键登录</el-button
+                  >
+                  <el-button
+                    link
+                    type="primary"
+                    size="small"
+                    @click="getTop(scope.row, scope.$index)"
+                    :disabled="scope.$index == 0"
+                    >置顶</el-button
+                  >
+                  <el-button
+                    link
+                    type="success"
+                    size="small"
+                    @click="setCopy(scope.row)"
+                    >复制</el-button
+                  >
+                  <el-button
+                    link
+                    type="danger"
+                    size="small"
+                    @click="delAccount(scope.row)"
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="ETC" name="ETC">
+            <el-table
+              class="table"
+              :default-sort="{ prop: 'index' }"
+              :data="
+                tableDataETC.filter(
+                  (data) =>
+                    !inputSearch ||
+                    Object.keys(data.tags).some((key) =>
+                      data.tags[key].includes(inputSearch)
+                    )
+                )
+              "
+              border
+              style="width: 100%"
+              height="330"
+              :header-cell-style="{ 'text-align': 'center' }"
+            >
+              <el-table-column
+                prop="username"
+                label="账号名称"
+                align="left"
+                width="180"
+              />
+              <el-table-column
+                prop="tags"
+                label="标签"
+                align="left"
+                width="310"
+              >
+                <template v-slot="scope">
+                  <el-tag
+                    class="tag"
+                    v-for="(tag, index) in scope.row.tags"
+                    :key="index"
+                    effect="light"
+                    round
+                    closable
+                    :disable-transitions="false"
+                    @close="handleClose(scope.row, tag)"
+                  >
+                    {{ tag }}
+                  </el-tag>
+                  <el-input
+                    class="input"
+                    v-if="scope.row.inputVisible"
+                    v-model="inputValue"
+                    ref="inputRef"
+                    size="small"
+                    autofocus="autofocus"
+                    @keyup.enter="handleInputConfirm(scope.row)"
+                    @blur="hideInput(scope.row)"
+                  />
+                  <el-button v-else size="small" @click="showInput(scope.row)">
+                    + 新标签
+                  </el-button>
+                </template>
+              </el-table-column>
+              <el-table-column
+                fixed="right"
+                label="操作"
+                align="center"
+                width="220"
+              >
+                <template v-slot="scope">
+                  <el-button
+                    link
+                    type="primary"
+                    size="small"
+                    @click="loginAccount(scope.row)"
+                    >一键登录</el-button
+                  >
+                  <el-button
+                    link
+                    type="primary"
+                    size="small"
+                    @click="getTop(scope.row, scope.$index)"
+                    :disabled="scope.$index == 0"
+                    >置顶</el-button
+                  >
+                  <el-button
+                    link
+                    type="success"
+                    size="small"
+                    @click="setCopy(scope.row)"
+                    >复制</el-button
+                  >
+                  <el-button
+                    link
+                    type="danger"
+                    size="small"
+                    @click="delAccount(scope.row)"
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
       </el-main>
     </el-container>
   </div>
@@ -139,19 +349,45 @@ export default {
     return {
       msg: "账号保险箱",
       inputSearch: "",
-      tableData: [],
+      rawTableData: [],
+      tableDataSTG: [],
+      tableDataUAT: [],
+      tableDataETC: [],
       inputValue: "",
       buttonVisible: false,
+      activeName: "STG",
     };
   },
   mounted() {
     // 从本地localstorage遍历所有key和value
     for (let i = 0; i < localStorage.length; i++) {
       let key = localStorage.key(i);
-      this.tableData.push(JSON.parse(window.localStorage.getItem(key)));
+      this.rawTableData.push(JSON.parse(window.localStorage.getItem(key)));
     }
+    console.log("rawTableData", this.rawTableData);
+    this.tableDataSTG = this.rawTableData.filter(
+      (item) => item.environment === "STG"
+    );
+    console.log("tableDataSTG", this.tableDataSTG);
   },
   methods: {
+    datafilter(activeName) {
+      console.log("数据显示", this.rawTableData);
+      console.log("标签页", activeName);
+      // TODO 通过Tab页切换重新渲染内容
+      if (activeName === "UAT") {
+        this.tableDataUAT = this.rawTableData.filter(
+          (item) => item.environment === "UAT"
+        );
+        console.log("tableDataUAT", this.tableDataUAT);
+      }
+      if (activeName === "ETC") {
+        this.tableDataETC = this.rawTableData.filter(
+          (item) => item.environment === "ETC"
+        );
+        console.log("tableDataETC", this.tableDataETC);
+      }
+    },
     async importFile(e) {
       const files = e.file;
       try {
@@ -199,12 +435,12 @@ export default {
     },
     // 异步导出
     async exportFile() {
-      // 将tableData转换为可用的数组
-      const initData = JSON.parse(JSON.stringify(this.tableData));
+      // 将rawTableData转换为可用的数组
+      const initData = JSON.parse(JSON.stringify(this.rawTableData));
       const newArr = initData.map((item) => {
         return item.tags;
       });
-      const workSheet = utils.json_to_sheet(this.tableData);
+      const workSheet = utils.json_to_sheet(this.rawTableData);
       const workBook = utils.book_new();
       utils.book_append_sheet(workBook, workSheet, "Data");
       // 将转换之后的数组插入到已经生成的sheet内容中
@@ -223,7 +459,10 @@ export default {
             currentWindow: true,
           },
           (tabs) => {
-            let message = { action: "GetAccountInfo" };
+            let message = {
+              action: "GetAccountInfo",
+              activeName: this.activeName,
+            };
             // 与content进行通信
             chrome.tabs.sendMessage(tabs[0].id, message, (res) => {
               // console.log(res);
@@ -324,8 +563,8 @@ export default {
       );
     },
     getTop(row, index) {
-      this.tableData.splice(index, 1);
-      this.tableData.unshift(row);
+      this.rawTableData.splice(index, 1);
+      this.rawTableData.unshift(row);
     },
     handleClose(row, tag) {
       // console.log(JSON.stringify(e.tags));
@@ -343,6 +582,7 @@ export default {
         username: row.username,
         password: row.password,
         inputVisible: false,
+        environment: this.activeName,
         tags: tagsArr,
       };
       window.localStorage.setItem(accout, JSON.stringify(value)); // 储存账号到本地
@@ -355,6 +595,7 @@ export default {
         username: row.username,
         password: row.password,
         inputVisible: true,
+        environment: this.activeName,
         tags: row.tags,
       };
       window.localStorage.setItem(accout, JSON.stringify(value)); // 添加tags到本地存储
@@ -368,6 +609,7 @@ export default {
         username: row.username,
         password: row.password,
         inputVisible: false,
+        environment: this.activeName,
         tags: row.tags,
       };
       window.localStorage.setItem(accout, JSON.stringify(value)); // 添加tags到本地存储
@@ -384,6 +626,7 @@ export default {
           username: row.username,
           password: row.password,
           inputVisible: false,
+          environment: this.activeName,
           tags: tagsArr,
         };
         window.localStorage.setItem(accout, JSON.stringify(value)); // 添加tags到本地存储
@@ -404,7 +647,7 @@ export default {
   color: #2c3e50;
   margin-top: 5px;
   position: relative;
-  width: 750px;
+  width: 800px;
   height: 100%;
   .row {
     margin-bottom: 20px;

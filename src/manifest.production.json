@@ -1,39 +1,27 @@
 {
-    "manifest_version": 3,
-    "name": "Account Management",
-    "description": "一个管理账号、密码的工具扩展。",
-    "author": "DD",
-    "version": "1.0.0",
-    "icons":{
-        "16": "imgs/safe.png",
-        "48": "imgs/safe.png",
-        "128": "imgs/safe.png"
-      },
-    "background": {
-        "service_worker": "js/background.js"
-    },
-    "action": {
-        "default_popup": "html/popup.html"
-    },
-    "permissions": [
-        "storage",
-        "cookies",
-        "scripting",
-        "tabs"
-    ],
-    "host_permissions": [
-        "http://*/*",
-        "https://*/*"
-      ],
-    "content_scripts": [
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "run_at": "document_idle",
-            "js": [
-                "js/content.js"
-            ]
-        }
-    ]
+  "manifest_version": 3,
+  "name": "Account Management---",
+  "description": "一个管理账号、密码的工具扩展。",
+  "author": "DD",
+  "version": "1.0.0",
+  "icons": {
+    "16": "imgs/safe.png",
+    "48": "imgs/safe.png",
+    "128": "imgs/safe.png"
+  },
+  "background": {
+    "service_worker": "js/background.js"
+  },
+  "action": {
+    "default_popup": "html/popup.html"
+  },
+  "permissions": ["storage", "cookies", "scripting", "tabs"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "run_at": "document_idle",
+      "js": ["js/content.js"]
+    }
+  ]
 }

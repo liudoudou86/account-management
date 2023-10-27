@@ -29,6 +29,7 @@ chrome.runtime.onMessage.addListener(
         username: usernameInput.value,
         password: passwordInput.value,
         inputVisible: false,
+        environment: request.activeName,
         tags: [],
       });
     }
