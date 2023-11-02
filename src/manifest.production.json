@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Account Management---",
+  "name": "Account Management",
   "description": "一个管理账号、密码的工具扩展。",
   "author": "DD",
   "version": "1.0.0",
