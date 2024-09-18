@@ -1,1 +1,1 @@
-console.log("background后台常驻");
+console.log('background后台常驻')

@@ -1,4 +1,5 @@
 ### 账号管理
+
 - 便于管理测试过程不同测试环境的各个角色账号
 - 提供本地输入及导出功能
 - 提供一键登录功能
@@ -8,5 +9,6 @@
 vue create [project name] # 创建VUE项目
 vue add chrome-extension-cli # 构建chrome插件模板
 npm install # 初始化项目module
+npx prettier --write . # prettier格式化
 npm run build # 项目打包
 ```

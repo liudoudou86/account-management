@@ -1,6 +1,6 @@
-import { createApp } from "vue";
-import App from "../view/popup.vue";
+import { createApp } from 'vue'
+import App from '../view/popup.vue'
 
-const app = createApp(App);
+const app = createApp(App)
 
-app.mount("#app");
+app.mount('#app')
