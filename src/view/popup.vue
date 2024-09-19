@@ -11,8 +11,8 @@
           </el-col>
           <el-col :span="9">
             <el-button type="success" @click="buttonVisible = true"> 导入 </el-button>
-            <el-button type="info" @click="exportFile"> 导出 </el-button>
-            <el-button type="warning" @click="addAccount"> 添加账号 </el-button>
+            <el-button type="warning" @click="exportFile"> 导出 </el-button>
+            <el-button type="primary" @click="addAccount"> 添加账号 </el-button>
           </el-col>
         </el-row>
         <el-dialog v-model="buttonVisible" title="导入账号密码备份">
@@ -23,15 +23,15 @@
             </template>
           </el-upload>
         </el-dialog>
-        <el-tabs v-model="activeName" class="demo-tabs" type="border-card" stretch="true" @tab-click="datafilter">
-          <el-tab-pane label="【STG环境】" name="STG">
-            <STG v-if="activeName == 'STG'" ref="STG" :sendData="inputSearch"></STG>
+        <el-tabs v-model="activeName" class="demo-tabs" type="border-card" stretch="true" @tab-click="getActiveName">
+          <el-tab-pane label="【STG】" name="STG">
+            <STG v-if="activeName == 'STG'" ref="STG" :send-data="inputSearch"></STG>
           </el-tab-pane>
-          <el-tab-pane label="【UAT环境】" name="UAT">
-            <UAT v-if="activeName == 'UAT'" ref="UAT" :sendData="inputSearch"></UAT>
+          <el-tab-pane label="【UAT】" name="UAT">
+            <UAT v-if="activeName == 'UAT'" ref="UAT" :send-data="inputSearch"></UAT>
           </el-tab-pane>
-          <el-tab-pane label="【ETC环境】" name="ETC">
-            <ETC v-if="activeName == 'ETC'" ref="ETC" :sendData="inputSearch"></ETC>
+          <el-tab-pane label="【ETC】" name="ETC">
+            <ETC v-if="activeName == 'ETC'" ref="ETC" :send-data="inputSearch"></ETC>
           </el-tab-pane>
         </el-tabs>
       </el-main>
@@ -46,7 +46,7 @@ import UAT from './uat'
 import ETC from './etc'
 
 export default {
-  name: 'popupView',
+  name: 'PopupView',
   // 引入子组件
   components: {
     STG,
@@ -60,21 +60,28 @@ export default {
       inputSearch: '',
       inputValue: '',
       buttonVisible: false,
-      activeName: 'STG'
+      activeName: ''
     }
   },
   mounted() {
+    // 从chrome.storage同步存储中获取activeName
+    chrome.storage.sync.get('activeName', result => {
+      if (result.activeName) {
+        this.activeName = result.activeName
+      } else {
+        // 如果没有找到activeName，则初始化为STG
+        this.activeName = 'STG'
+      }
+    })
     // 从本地localstorage遍历所有key和value
     for (let i = 0; i < localStorage.length; i++) {
       let key = localStorage.key(i)
       this.rawTableData.push(JSON.parse(window.localStorage.getItem(key)))
     }
-    console.log('rawTableData', this.rawTableData)
   },
   methods: {
-    // TODO 目标: 维持退出的标签页
-    datafilter(tab) {
-      console.log('当前标签页', tab.paneName)
+    getActiveName(tab) {
+      chrome.storage.sync.set({ activeName: tab.paneName })
     },
     async importFile(e) {
       const files = e.file
@@ -152,7 +159,6 @@ export default {
             }
             // 与content进行通信
             chrome.tabs.sendMessage(tabs[0].id, message, res => {
-              // console.log(res);
               let accout = res.url + '_' + res.username
               window.localStorage.setItem(accout, JSON.stringify(res)) // 储存账号到本地
               window.location.reload() // 刷新页面

@@ -13,8 +13,9 @@
     >
       <el-table-column prop="username" label="账号名称" align="left" width="200" />
       <el-table-column prop="tags" label="标签" align="left" width="300">
-        <template v-slot="scope">
+        <template #default="scope">
           <el-tag
+            :type="getTagColor(index)"
             class="tag"
             v-for="(tag, index) in scope.row.tags"
             :key="index"
@@ -40,11 +41,11 @@
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" align="center" width="210">
-        <template v-slot="scope">
+        <template #default="scope">
           <el-button link type="primary" size="small" @click="loginAccount(scope.row)">一键登录</el-button>
           <el-button
             link
-            type="primary"
+            type="info"
             size="small"
             @click="getTop(scope.row, scope.$index)"
             :disabled="scope.$index == 0"
@@ -76,11 +77,13 @@ export default {
       let key = localStorage.key(i)
       this.rawTableData.push(JSON.parse(window.localStorage.getItem(key)))
     }
-    console.log('rawTableData', this.rawTableData)
     this.tableDataETC = this.rawTableData.filter(item => item.environment === 'ETC')
-    console.log('tableDataETC', this.tableDataETC)
   },
   methods: {
+    getTagColor(index) {
+      const colors = ['primary', 'success', 'warning', 'danger']
+      return colors[index % colors.length]
+    },
     setCopy(row) {
       let content = '【账号】:' + row.username + '【密码】:' + row.password
       // 将内容添加进系统剪贴板，完成一键复制
@@ -173,7 +176,6 @@ export default {
       this.tableDataETC.unshift(row)
     },
     handleClose(row, tag) {
-      // console.log(JSON.stringify(e.tags));
       let tagsArr = row.tags
       let accout = row.url + '_' + row.username
       tagsArr.splice(tagsArr.indexOf(tag), 1)

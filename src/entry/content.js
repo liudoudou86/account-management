@@ -1,5 +1,3 @@
-console.log('content读取DOM')
-
 chrome.runtime.onMessage.addListener(
   // 监听扩展程序发送的请求
   function (request, sender, sendResponse) {
