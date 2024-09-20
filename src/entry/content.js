@@ -1,3 +1,6 @@
+import { EncryptionUtil } from './encryption.js'
+
+console.log('content后台监控')
 chrome.runtime.onMessage.addListener(
   // 监听扩展程序发送的请求
   function (request, sender, sendResponse) {
@@ -20,7 +23,7 @@ chrome.runtime.onMessage.addListener(
       sendResponse({
         url: window.location.href,
         username: usernameInput.value,
-        password: passwordInput.value,
+        password: EncryptionUtil.encrypted(passwordInput.value),
         inputVisible: false,
         environment: request.activeName,
         tags: []
@@ -29,7 +32,7 @@ chrome.runtime.onMessage.addListener(
     if (request.action === 'InputAccountInfo') {
       usernameInput.value = request.username
       usernameInput.dispatchEvent(evt)
-      passwordInput.value = request.password
+      passwordInput.value = EncryptionUtil.decrypted(request.password)
       passwordInput.dispatchEvent(evt)
       submit.click()
       sendResponse({

@@ -62,7 +62,13 @@
 <script>
 export default {
   name: 'UAT',
-  props: ['sendData'], // 接收父组件传递的数据
+  props: {
+    // 接收父组件传递的数据
+    sendData: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       rawTableData: [],

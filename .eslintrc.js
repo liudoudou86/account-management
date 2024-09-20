@@ -5,8 +5,7 @@ module.exports = {
     browser: true,
     es6: true
   },
-  // base, essential(默认), strongly-recommended, recommended
-  extends: ['plugin:vue/strongly-recommended', '@vue/prettier'],
+  extends: ['plugin:vue/strongly-recommended', 'plugin:prettier/recommended'],
   rules: {
     'space-before-function-paren': 0,
     // 禁止出现未使用过的变量

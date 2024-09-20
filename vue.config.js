@@ -50,6 +50,11 @@ module.exports = {
     ])
   },
   configureWebpack: {
+    performance: {
+      hints: 'warning', // 或者 false 来关闭提示
+      maxEntrypointSize: 10 * 1024 * 1024, // 10MB
+      maxAssetSize: 30 * 1024 * 1024 // 30MB
+    },
     output: {
       filename: `js/[name].js`,
       chunkFilename: `js/[name].js`

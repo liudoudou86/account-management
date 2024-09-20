@@ -41,6 +41,7 @@
 
 <script>
 import { read, writeFileXLSX, utils } from 'xlsx'
+import { EncryptionUtil } from '../entry/encryption'
 import STG from './stg'
 import UAT from './uat'
 import ETC from './etc'
@@ -93,7 +94,10 @@ export default {
           delete tagsFix.tags_1
           delete tagsFix.tags_2
         })
-        console.log('读取文件的内容为: ' + JSON.stringify(newData))
+        // 使用forEach循环对每个对象的password属性进行加密
+        newData.forEach(user => {
+          user.password = EncryptionUtil.encrypted(user.password)
+        })
         for (let i = 0; i < newData.length; i++) {
           let getUrl = newData[i].url
           let getUsername = newData[i].username
@@ -123,18 +127,17 @@ export default {
           const workSheet = utils.sheet_to_json(workBook.Sheets[workName])
           resolve(workSheet)
         }
-        fileReader.readAsBinaryString(file)
+        fileReader.readAsArrayBuffer(file)
       })
     },
     // 异步导出
     async exportFile() {
       // 将rawTableData转换为可用的数组
       const initData = JSON.parse(JSON.stringify(this.rawTableData))
-      console.log(initData)
       const newArr = initData.map(item => {
         return item.tags
       })
-      const workSheet = utils.json_to_sheet(this.rawTableData)
+      const workSheet = utils.json_to_sheet(initData)
       const workBook = utils.book_new()
       utils.book_append_sheet(workBook, workSheet, 'Data')
       // 将转换之后的数组插入到已经生成的sheet内容中
