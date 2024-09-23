@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import { EncryptionUtil } from '../entry/encryption'
+
 export default {
   name: 'STG',
   props: {
@@ -91,7 +93,8 @@ export default {
       return colors[index % colors.length]
     },
     setCopy(row) {
-      let content = '【账号】:' + row.username + '【密码】:' + row.password
+      let password = EncryptionUtil.decrypted(row.password)
+      let content = '【账号】:' + row.username + '【密码】:' + password
       // 将内容添加进系统剪贴板，完成一键复制
       navigator.clipboard
         .writeText(content)

@@ -56,7 +56,7 @@ export default {
   },
   data() {
     return {
-      msg: '账号保险箱',
+      msg: '密码保险箱',
       rawTableData: [],
       inputSearch: '',
       inputValue: '',
@@ -137,13 +137,17 @@ export default {
       const newArr = initData.map(item => {
         return item.tags
       })
+      // 使用forEach循环对每个对象的password属性进行加密
+      initData.forEach(user => {
+        user.password = EncryptionUtil.decrypted(user.password)
+      })
       const workSheet = utils.json_to_sheet(initData)
       const workBook = utils.book_new()
       utils.book_append_sheet(workBook, workSheet, 'Data')
       // 将转换之后的数组插入到已经生成的sheet内容中
       utils.sheet_add_aoa(workSheet, newArr, { origin: 'F2' })
       // 将js对象直接导出
-      await writeFileXLSX(workBook, '账号保险箱备份导出.xlsx')
+      await writeFileXLSX(workBook, '账号保险箱数据导出.xlsx')
     },
     addAccount() {
       if (!window.localStorage) {
