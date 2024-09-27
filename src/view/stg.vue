@@ -145,35 +145,38 @@ export default {
               )
             } else {
               chrome.tabs.create({ url: row.url }, async tab => {
-                await chrome.scripting.executeScript({
-                  target: { tabId: tab.id },
-                  // 通过args给func传参
-                  args: [row],
-                  func: row => {
-                    // 增加延迟输入
-                    setTimeout(() => {
-                      // 定义全局变量
-                      let usernameInput =
+                try {
+                  await chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    func: async row => {
+                      await new Promise(resolve => setTimeout(resolve, 3000)) // 增加延迟
+
+                      const usernameInput =
                         document.querySelector('input[type="text"]') || document.querySelector('input[name="username"]')
-                      let passwordInput =
+                      const passwordInput =
                         document.querySelector('input[type="password"]') ||
                         document.querySelector('input[name="password"]')
-                      // 此处为了兼容多种类型的按钮
-                      let submit =
+                      const submit =
                         document.querySelector('button[type="button"]') ||
                         document.querySelector('button[type="submit"]')
-                      // 通过添加EventTarget方法监听事件处理
-                      let evt = new Event('input', {
-                        bubbles: true
-                      })
+
+                      if (!usernameInput || !passwordInput || !submit) {
+                        throw new Error('Required elements not found')
+                      }
+
                       usernameInput.value = row.username
-                      usernameInput.dispatchEvent(evt)
-                      passwordInput.value = row.password
-                      passwordInput.dispatchEvent(evt)
+                      usernameInput.dispatchEvent(new Event('input', { bubbles: true }))
+                      //TODO :此处未修复
+                      passwordInput.value = EncryptionUtil.decrypted(row.password)
+                      console.warn('passwordInput.value', passwordInput.value)
+                      passwordInput.dispatchEvent(new Event('input', { bubbles: true }))
                       submit.click()
-                    }, 3000)
-                  }
-                })
+                    },
+                    args: [row]
+                  })
+                } catch (error) {
+                  console.error('Error executing script:', error)
+                }
               })
             }
           })
