@@ -145,11 +145,15 @@ export default {
               )
             } else {
               chrome.tabs.create({ url: row.url }, async tab => {
+                const newRow = {
+                  ...row,
+                  password: EncryptionUtil.decrypted(row.password)
+                }
                 try {
                   await chrome.scripting.executeScript({
                     target: { tabId: tab.id },
-                    func: async row => {
-                      await new Promise(resolve => setTimeout(resolve, 3000)) // 增加延迟
+                    func: async newRow => {
+                      await new Promise(resolve => setTimeout(resolve, 5000)) // 增加延迟
 
                       const usernameInput =
                         document.querySelector('input[type="text"]') || document.querySelector('input[name="username"]')
@@ -164,15 +168,13 @@ export default {
                         throw new Error('Required elements not found')
                       }
 
-                      usernameInput.value = row.username
+                      usernameInput.value = newRow.username
                       usernameInput.dispatchEvent(new Event('input', { bubbles: true }))
-                      //TODO :此处未修复
-                      passwordInput.value = EncryptionUtil.decrypted(row.password)
-                      console.warn('passwordInput.value', passwordInput.value)
+                      passwordInput.value = newRow.password
                       passwordInput.dispatchEvent(new Event('input', { bubbles: true }))
                       submit.click()
                     },
-                    args: [row]
+                    args: [newRow]
                   })
                 } catch (error) {
                   console.error('Error executing script:', error)

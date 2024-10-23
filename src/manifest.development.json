@@ -21,7 +21,7 @@
     {
       "matches": ["<all_urls>"],
       "run_at": "document_idle",
-      "js": ["js/content.js"]
+      "js": ["js/content.js", "js/encryption.js"]
     }
   ]
 }
