@@ -4,7 +4,11 @@
       class="table"
       :default-sort="{ prop: 'index' }"
       :data="
-        tableDataUAT.filter(data => !sendData || Object.keys(data.tags).some(key => data.tags[key].includes(sendData)))
+        tableDataSTG.filter(data => {
+          if (!sendData) return true
+          const searchTerms = sendData.split(' ')
+          return searchTerms.every(term => Object.keys(data.tags).some(key => data.tags[key].includes(term)))
+        })
       "
       border
       style="width: 100%"
