@@ -4,7 +4,7 @@
       class="table"
       :default-sort="{ prop: 'index' }"
       :data="
-        tableDataSTG.filter(data => {
+        tableDataUAT.filter(data => {
           if (!sendData) return true
           const searchTerms = sendData.split(' ')
           return searchTerms.every(term => Object.keys(data.tags).some(key => data.tags[key].includes(term)))
